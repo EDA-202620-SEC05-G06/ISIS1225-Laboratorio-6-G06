@@ -4,13 +4,6 @@ from DataStructures.Utils import error as error
 
 def new_list():
     
-    """Crea una lista implementada con una Lista Simplemente Encadenada vacía. 
-
-        Define ``first`` y ``last`` como None y el ``size`` en cero
-
-        :returns: Lista creada
-        :rtype: linked_list
-    """
     newlist = {'first': None,
                'last': None,
                'size': 0,
@@ -20,20 +13,7 @@ def new_list():
 
 
 def add_first(my_list, element):
-    """Agrega un elemento en la primera posición de la lista.
-
-    Al agregar un elemento en la primera posición de la lista, se incrementa el tamaño de la lista en uno.
-    En caso de que la lista esté vacía, el nuevo elemento se convierte en el primer y último elemento de la lista.
-
-
-    :param my_list: SingleLinkedList en la que se va a insertar el elemento
-    :type my_list: single_linked_list
-    :param element: Elemento a insertar
-    :type element: any
-
-    :returns: SingleLinkedList con el elemento insertado en la primera posición
-    :rtype: single_linked_list
-    """
+    
     try:
         new_node = node.new_single_node(element)
         new_node['next'] = my_list['first']
@@ -47,19 +27,7 @@ def add_first(my_list, element):
 
 
 def add_last(my_list, element):
-    """ Agrega un elemento en la última posición de la lista.
-
-        Al agregar un elemento en la última posición de la lista y se incrementa el tamaño de la lista en uno.
-        En caso de que la lista esté vacía, el nuevo elemento se convierte en el primer y último elemento de la lista.
-        
-        :param my_list: SingleLinkedList en la que se va a insertar el elemento
-        :type my_list: single_linked_list
-        :param element: Elemento a insertar
-        :type element: any
-
-        :returns: SingleLinkedList con el elemento insertado en la última posición
-        :rtype: single_linked_list
-    """
+    
     try:
         new_node = node.new_single_node(element)
 
@@ -75,14 +43,7 @@ def add_last(my_list, element):
 
 
 def is_empty(my_list):
-    """ Indica si la lista está vacía
-
-        :param my_list: Lista a examinar
-        :type my_list: single_linked_list
-
-        :returns: ``True`` si la lista está vacía, ``False`` en caso contrario
-        :rtype: bool
-    """
+   
     try:
         return my_list['size'] == 0
     except Exception as exp:
@@ -90,14 +51,7 @@ def is_empty(my_list):
 
 
 def size(my_list):
-    """ Retorna el número de elementos de la lista.
-
-        :param my_list: La lista a examinar
-        :type my_list: single_linked_list
-
-        :returns: Número de elementos de la lista
-        :rtype: int
-    """
+    
     try:
         return my_list['size']
     except Exception as exp:
@@ -105,17 +59,7 @@ def size(my_list):
 
 
 def first_element(my_list):
-    """ Retorna el primer elemento de una lista.
-        
-        Retorna el primer elemento de la lista, si la lista no está vacía.
-        Esta funcion NO elimina el elemento de la lista.
-
-        :param my_list: La lista a examinar
-        :type my_list: single_linked_list
-
-        :returns: Primer elemento de la lista
-        :rtype: any
-    """
+    
     try:
         if my_list['first'] is not None:
             return my_list['first']['info']
@@ -125,17 +69,7 @@ def first_element(my_list):
 
 
 def last_element(my_list):
-    """ Retorna el último elemento de una lista.
-
-        Retorna el último elemento de la lista, si la lista no está vacía.
-        Esta funcion NO elimina el elemento de la lista.
-
-        :param my_list: La lista a examinar
-        :type my_list: single_linked_list
-
-        :returns: Último elemento de la lista
-        :rtype: any
-    """
+    
     try:
         if my_list['last'] is not None:
             return my_list['last']['info']
@@ -145,21 +79,7 @@ def last_element(my_list):
 
 
 def get_element(my_list, pos):
-    """ Retorna el elemento en la posición ``pos`` de la lista.
-
-        Se recorre la lista hasta el elemento ``pos``, el cual debe ser igual o mayor
-        que cero y menor al tamaño de la lista.
-        Se retorna el elemento en dicha posición sin eliminarlo.
-        La lista no puede ser vacía.
-
-        :param my_list: La lista a examinar
-        :type my_list: single_linked_list
-        :param pos: Posición del elemento a retornar
-        :type pos: int
-
-        :returns: Elemento en la posición ``pos``
-        :rtype: any
-    """
+    
     searchpos = 0
     node = my_list['first']
     while searchpos < pos:
@@ -169,21 +89,7 @@ def get_element(my_list, pos):
 
 
 def delete_element(my_list, pos):
-    """ Elimina el elemento en la posición ``pos`` de la lista.
-
-        La lista no puede estar vacía.
-        Elimina el elemento que se encuentra en la posición ``pos`` de la lista.
-        ``Pos`` debe ser igual o mayor que cero y menor al tamaño de la lista.
-        Se decrementa en un uno el tamaño de la lista.
-
-        :param my_list: La lista a examinar
-        :type my_list: single_linked_list
-        :param pos: Posición del elemento a eliminar
-        :type pos: int
-
-        :returns: Lista con el elemento eliminado
-        :rtype: single_linked_list
-    """
+    
     try:
         if (my_list['size'] > 0):
             if (pos == 0):
@@ -207,18 +113,7 @@ def delete_element(my_list, pos):
 
 
 def remove_first(my_list):
-    """ Remueve el primer elemento de la lista y lo retorna.
-
-        Elimina y retorna el primer elemento de la lista.
-        El tamaño de la lista se decrementa en uno.  Si la lista
-        es vacía se retorna ``None``.
-
-        :param my_list: La lista a examinar
-        :type my_list: single_linked_list
-
-        :returns: Primer elemento de la lista
-        :rtype: any
-    """
+    
     try:
         if my_list['first'] is not None:
             temp = my_list['first']['next']
@@ -235,18 +130,7 @@ def remove_first(my_list):
 
 
 def remove_last(my_list):
-    """ Remueve el último elemento de la lista.
-
-        Elimina el último elemento de la lista  y lo retorna en caso de existir.
-        El tamaño de la lista se decrementa en 1.
-        Si la lista es vacía retorna ``None``.
-
-        :param my_list: La lista a examinar
-        :type my_list: single_linked_list
-
-        :returns: Último elemento de la lista
-        :rtype: any
-    """
+    
     try:
         if my_list['size'] > 0:
             if my_list['first'] == my_list['last']:
@@ -269,23 +153,7 @@ def remove_last(my_list):
 
 
 def insert_element(my_list, element, pos):
-    """ Inserta el elemento element en la posición ``pos`` de la lista.
-
-        Inserta el elemento en la posición ``pos`` de la lista.
-        La lista puede ser vacía.
-        Se incrementa en 1 el tamaño de la lista.
-        ``pos`` debe ser mayor o igual que cero y menor al tamaño de la lista.
-
-        :param my_list: La lista en la que se va a insertar el elemento
-        :type my_list: single_linked_list
-        :param element: El elemento a insertar
-        :type element: any
-        :param pos: posición en la que se va a insertar el elemento
-        :type pos: int
-
-        :returns: Lista con el elemento insertado
-        :rtype: single_linked_list
-    """
+    
     new_node = node.new_single_node(element)
     if (my_list['size'] == 0):
         my_list['first'] = new_node
@@ -312,24 +180,7 @@ def insert_element(my_list, element, pos):
 
 
 def is_present(my_list, element, cmp_function):
-    """ Informa si el elemento element esta presente en la lista.
-
-        Informa si un elemento está en la lista.
-        Si esta presente, retorna la posición en la que se encuentra
-        o menos uno (-1) si no esta presente. Se utiliza la función de comparación
-        pasada por parámetro para comparar los elementos,
-        la cual debe retornan cero si los elementos son iguales.
-
-        :param my_list: La lista a examinar
-        :type my_list: single_linked_list
-        :param element: El elemento a buscar
-        :type element: any
-        :param cmp_function: Función de comparación de elementos
-        :type cmp_function: function
-
-        :returns: Posición del elemento en la lista
-        :rtype: int
-    """
+    
     try:
         is_in_array = False
         temp = my_list['first']
@@ -349,19 +200,7 @@ def is_present(my_list, element, cmp_function):
 
 
 def change_info(my_list, pos, new_info):
-    """ Cambia la información contenida en el nodo de la lista
-        que se encuentra en la posición ``pos`` por la información recibida en new_info.
-
-        :param my_list: La lista a examinar
-        :type my_list: single_linked_list
-        :param pos: posición de la lista con la información a cambiar
-        :type pos: int
-        :param new_info: Nueva información que se debe poner en el nodo de la posición ``pos``
-        :type new_info: any
-
-        :returns: Lista con la información cambiada
-        :rtype: single_linked_list
-    """
+    
     try:
         current = my_list['first']
         cont = 0
@@ -375,18 +214,7 @@ def change_info(my_list, pos, new_info):
 
 
 def exchange(my_list, pos1, pos2):
-    """ Intercambia la información en las posiciones ``pos1`` y ``pos2`` de la lista.
-
-        :param my_list: La lista a examinar
-        :type my_list: single_linked_list
-        :param pos1: Posición del primer elemento
-        :type pos1: int
-        :param pos2: Posición del segundo elemento
-        :type pos2: int
-
-        :returns: Lista con la información intercambiada
-        :rtype: single_linked_list
-    """
+    
     try:
         if pos1 == pos2:
             return my_list
@@ -400,22 +228,7 @@ def exchange(my_list, pos1, pos2):
 
 
 def sub_list(my_list, pos, num_elem):
-    """ Retorna una sub-lista de la lista recibida.
-
-        Retorna una lista que contiene los elementos a partir de la posición ``pos``,
-        con una longitud de ``num_elem`` elementos.
-        Se crea una copia de dichos elementos y se retorna una lista nueva.
-
-        :param my_list: La lista origen
-        :type my_list: single_linked_list
-        :param pos: Posición del primer elemento
-        :type pos: int
-        :param num_elem: Posición del segundo elemento
-        :type pos: int
-
-        :returns: Sub-lista de la lista original
-        :rtype: single_linked_list
-    """
+    
     try:
         sublst = new_list()
         cont = 0
@@ -431,22 +244,7 @@ def sub_list(my_list, pos, num_elem):
 
 
 def compare_elements(my_list, element, info, cmp_function):
-    """ Compara el elemento ``element`` de la lista ``my_list`` con el elemento ``info``.
-
-        Se utiliza la función de comparación por defecto si key es None o la función provista por el usuario en caso contrario
-
-        :param my_list: La lista con los elementos
-        :type my_list: single_linked_list
-        :param element: El elemento que se está buscando en la lista
-        :type element: any
-        :param info: El elemento de la lista que se está analizando\
-        :type info: any
-        :param cmp_function: Función de comparación de elementos
-        :type cmp_function: function
-
-        :returns: 0 si los elementos son iguales, 1 si element > info, -1 si element < info
-        :rtype: single_linked_list
-    """
+    
     try:
         if (my_list['key'] is not None):
             return my_list['cmpfunction'](element[my_list['key']], info[my_list['key']])
@@ -457,18 +255,7 @@ def compare_elements(my_list, element, info, cmp_function):
 
 
 def defaultfunction(id1, id2):
-    """ Función de comparación por defecto
-
-        Compara dos elementos
-
-        :param id1: Identificador 1
-        :type id1: any
-        :param id2: Identificador 2
-        :type id2: any
-
-        :retuns: 0 si los elementos son iguales, 1 si id1 > id2, -1 si id1 < id2
-        :rtype: int
-    """
+    
     if id1 > id2:
         return 1
     elif id1 < id2:
@@ -476,24 +263,7 @@ def defaultfunction(id1, id2):
     return 0
 
 def selection_sort(my_list, sort_crit):
-    """ Función de ordenamiento que implementa el algoritmo de **Slection Sort**
-
-        Se recorre la lista y se selecciona el elemento más pequeño
-        y se intercambia con el primer elemento de la lista.
-        Se repite el proceso con el segundo elemento más pequeño y así sucesivamente.
-
-        Si la lista es vacía o tiene un solo elemento, se retorna la lista original.
-
-        Dependiendo de la función de comparación, se ordena la lista de manera ascendente o descendente.
-
-        :param my_list: Lista a ordenar
-        :type my_list: single_linked_list
-        :param sort_crit: Función de comparación de elementos para ordenar
-        :type sort_crit: function
-
-        :returns: Lista ordenada
-        :rtype: single_linked_list
-    """
+    
 
     if size(my_list) > 1:
         n = size(my_list)
@@ -512,25 +282,7 @@ def selection_sort(my_list, sort_crit):
     return my_list
 
 def insertion_sort(my_list, sort_crit):
-    """ Función de ordenamiento que implementa el algoritmo de **Insertion Sort**
-
-        Se recorre la lista y se inserta el elemento en la posición correcta
-        en la lista ordenada.
-        Se repite el proceso hasta que la lista esté ordenada.
-
-        Si la lista es vacía o tiene un solo elemento, se retorna la lista original.
-
-        Dependiendo de la función de comparación, se ordena la lista de manera ascendente o descendente.
-
-        :param my_list: Lista a ordenar
-        :type my_list: single_linked_list
-        :param sort_crit: Función de comparación de elementos para ordenar
-        :type sort_crit: function
-
-        :returns: Lista ordenada
-        :rtype: single_linked_list
-
-    """
+    
     if size(my_list) > 1:
         n = size(my_list)
         pos1 = 0
@@ -545,23 +297,7 @@ def insertion_sort(my_list, sort_crit):
 
 def shell_sort(my_list, sort_crit):
 
-    """ Función de ordenamiento que implementa el algoritmo de **Shell Sort**
-        Se recorre la lista y se ordena los elementos con un gap determinado.
-        Se repite el proceso con un gap menor hasta que la lista esté ordenada.
-
-        Si la lista es vacía o tiene un solo elemento, se retorna la lista original.
-
-        Dependiendo de la función de comparación, se ordena la lista de manera ascendente o descendente.
-
-        :param my_list: Lista a ordenar
-        :type my_list: single_linked_list
-        :param sort_crit: Función de comparación de elementos para ordenar
-        :type sort_crit: function
-
-        :returns: Lista ordenada
-        :rtype: single_linked_list
-
-    """
+    
     if size(my_list) > 1:
         n = size(my_list)
         h = 1
@@ -579,24 +315,7 @@ def shell_sort(my_list, sort_crit):
     return my_list
 
 def merge_sort(my_list, sort_crit):
-    """ Función de ordenamiento que implementa el algoritmo de **Merge Sort**
-
-        Se divide la lista en dos partes, se ordenan las partes y se combinan
-        las partes ordenadas.
-
-        Si la lista es vacía o tiene un solo elemento, se retorna la lista original.
-
-        Dependiendo de la función de comparación, se ordena la lista de manera ascendente o descendente.
-
-        :param my_list: Lista a ordenar
-        :type my_list: single_linked_list
-        :param sort_crit: Función de comparación de elementos para ordenar
-        :type sort_crit: function
-
-        :returns: Lista ordenada
-        :rtype: single_linked_list
-
-    """
+    
     n = size(my_list)
     if n > 1:
         mid = (n // 2)
@@ -639,43 +358,12 @@ def merge_sort(my_list, sort_crit):
     return my_list
 
 def quick_sort(my_list, sort_crit):
-    """ Función de ordenamiento que implementa el algoritmo de **Quick Sort**
-
-        Se selecciona un elemento como **pivot** y se ordenan los elementos
-
-        Si la lista es vacía o tiene un solo elemento, se retorna la lista original.
-
-        Dependiendo de la función de comparación, se ordena la lista de manera ascendente o descendente.
-
-        :param my_list: Lista a ordenar
-        :type my_list: single_linked_list
-        :param sort_crit: Función de comparación de elementos para ordenar
-        :type sort_crit: function
-
-        :returns: Lista ordenada
-        :rtype: single_linked_list
-
-    """
+    
     quick_sort_recursive(my_list, 0, size(my_list)-1, sort_crit)
     return my_list
 
 def quick_sort_recursive(my_list, lo, hi, sort_crit):
-    """ Función recursiva que implementa el algoritmo de **quick sort**, esta es llamada por la función ``quick_sort()``
-
-        Se localiza el **pivot**, utilizando la funcion de particion.
-
-        Luego se hace la recursión con los elementos a la izquierda del **pivot**
-        y los elementos a la derecha del **pivot**
-
-        :param my_list: Lista a ordenar
-        :type my_list: single_linked_list
-        :param lo: Posición del primer elemento
-        :type lo: int
-        :param hi: Posición del último elemento
-        :type hi: int
-        :param sort_crit: Función de comparación de elementos para ordenar
-        :type sort_crit: function
-    """
+    
     if (lo >= hi):
         return
     pivot = partition(my_list, lo, hi, sort_crit)
@@ -684,23 +372,7 @@ def quick_sort_recursive(my_list, lo, hi, sort_crit):
 
 def partition(my_list, lo, hi, sort_crit):
 
-    """ Función que implementa la partición de la lista en **quick sort**, esta es llamada por la función ``quick_sort_recursive()``
-
-        Se selecciona un **pivot** y se ordenan los elementos menores a la izquierda del **pivot**
-        y los elementos mayores a la derecha del **pivot**
-
-        :param my_list: Lista a ordenar
-        :type my_list: single_linked_list
-        :param lo: Posición del primer elemento
-        :type lo: int
-        :param hi: Posición del último elemento
-        :type hi: int
-        :param sort_crit: Función de comparación de elementos para ordenar
-        :type sort_crit: function
-
-        :returns: Posición del **pivot**
-        :rtype: int
-    """
+    
     follower = leader = lo
     while leader < hi:
         if sort_crit(
@@ -712,22 +384,7 @@ def partition(my_list, lo, hi, sort_crit):
     return follower
 
 def default_sort_criteria(element1, element2):
-    """ Función de comparación por defecto para ordenar de manera ascendente.
-
-<<<<<<< HEAD
-        Compara dos elementos y retorna ``True`` si el primer elemento es menor al segundo elemento.
-=======
-        Compara dos elementos y retorna ``True`` si el primer elemento es menor o igual al segundo elemento.
->>>>>>> origin/main
-
-        :param element1: Elemento 1
-        :type element1: any
-        :param element2: Elemento 2
-        :type element2: any
-
-        :returns: ``True`` si el primer elemento es menor al segundo elemento, ``False`` en caso contrario
-        :rtype: bool
-    """
+    
     is_sorted = False
     if element1 < element2:
         is_sorted = True
