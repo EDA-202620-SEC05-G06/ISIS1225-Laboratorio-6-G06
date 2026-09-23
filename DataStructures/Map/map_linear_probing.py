@@ -127,7 +127,7 @@ def find_slot(my_map, key, hash_value):
         entry = al.get_element(table, pos)
         entry_key = me.get_key(entry)
         if entry_key is None:
-            # Casilla nunca usada: la llave no puede estar más adelante
+            
             if first_avail is None:
                 first_avail = pos
             return False, first_avail
