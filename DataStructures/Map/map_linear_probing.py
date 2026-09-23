@@ -14,15 +14,6 @@ def new_map(numelem, factcarga, primo=109345121):
     """
     Crea una nueva tabla de símbolos (map) sin elementos.
 
-    :param numelem: Número de elementos que se desean almacenar en la tabla
-    :type numelem: int
-    :param factcarga: Factor de carga límite de la tabla antes de hacer un rehash
-    :type factcarga: float
-    :param primo: Número primo utilizado para el cálculo del hash
-    :type primo: int
-
-    :returns: Tabla recién creada
-    :rtype: map_linear_probing
     """
     capac = mf.next_prime(numelem / factcarga)
     mapa = {
@@ -43,10 +34,7 @@ def new_map(numelem, factcarga, primo=109345121):
 def put(mapa, llave, valor):
     """
     Ingresa una pareja llave-valor a la tabla. Si la llave ya existe,
-    se reemplaza su valor. Si el factor de carga supera el límite se hace rehash.
-
-    :returns: El mapa con la nueva pareja
-    :rtype: map_linear_probing
+    se reemplaza su valor. 
     """
     valhash = mf.hash_value(mapa, llave)
     ocupado, posic = find_slot(mapa, llave, valhash)
@@ -63,10 +51,8 @@ def put(mapa, llave, valor):
 
 def contains(mapa, llave):
     """
-    Valida si la llave ``llave`` se encuentra en el mapa.
+    Valida si la llave  se encuentra en el mapa.
 
-    :returns: True si la llave está en el mapa, False en caso contrario
-    :rtype: bool
     """
     ocupado, _ = find_slot(mapa, llave, mf.hash_value(mapa, llave))
     return ocupado
@@ -74,10 +60,7 @@ def contains(mapa, llave):
 
 def get(mapa, llave):
     """
-    Obtiene el valor asociado a la llave ``llave``.
-
-    :returns: Valor asociado a la llave o None si no existe
-    :rtype: any
+    Obtiene el valor asociado a la llave 
     """
     ocupado, posic = find_slot(mapa, llave, mf.hash_value(mapa, llave))
     if ocupado:
@@ -87,11 +70,9 @@ def get(mapa, llave):
 
 def remove(mapa, llave):
     """
-    Elimina la pareja llave-valor asociada a ``llave``. La posición se marca
-    con ``__EMPTY__`` para no romper las secuencias de sondeo.
+    Elimina la pareja llave-valor  La posición se marca
+    con __EMPTY__ para no romper las secuencias de sondeo
 
-    :returns: El mapa sin la llave
-    :rtype: map_linear_probing
     """
     ocupado, posic = find_slot(mapa, llave, mf.hash_value(mapa, llave))
     if ocupado:
@@ -103,21 +84,15 @@ def remove(mapa, llave):
 
 def size(mapa):
     """
-    Retorna el número de parejas llave-valor en el mapa.
+    Retorna el número de parejas llave-valor 
     """
     return mapa["size"]
 
 
 def find_slot(my_map, key, hash_value):
     """
-    Busca la posición de la llave ``key`` a partir de ``hash_value``.
+    Busca la posición de la llave.
 
-    Si la llave está en la tabla retorna ``(True, pos)`` con su posición.
-    Si no está retorna ``(False, pos)`` con la primera posición disponible
-    donde podría insertarse.
-
-    :returns: Tupla (ocupado, posición)
-    :rtype: tuple
     """
     table = my_map["table"]
     capacity = my_map["capacity"]
@@ -142,8 +117,7 @@ def find_slot(my_map, key, hash_value):
 
 def is_available(table, pos):
     """
-    Informa si la posición ``pos`` de la tabla está disponible
-    (nunca usada o marcada como ``__EMPTY__``).
+    Informa si la posición  de la tabla está disponible
     """
     entry = al.get_element(table, pos)
     key = me.get_key(entry)
@@ -153,9 +127,6 @@ def is_available(table, pos):
 def default_compare(key, entry):
     """
     Función de comparación por defecto entre una llave y la llave de una entrada.
-
-    :returns: 0 si son iguales, 1 si ``key`` es mayor, -1 si es menor
-    :rtype: int
     """
     entry_key = me.get_key(entry)
     if key == entry_key:
@@ -168,10 +139,7 @@ def default_compare(key, entry):
 def rehash(my_map):
     """
     Aumenta la capacidad de la tabla al siguiente primo mayor al doble de la
-    capacidad actual y reinserta todas las parejas llave-valor.
-
-    :returns: El mapa con la nueva capacidad
-    :rtype: map_linear_probing
+    capacidad actual 
     """
     old_table = my_map["table"]
     new_capacity = mf.next_prime(2 * my_map["capacity"])
