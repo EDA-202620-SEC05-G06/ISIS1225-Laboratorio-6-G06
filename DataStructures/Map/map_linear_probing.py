@@ -89,6 +89,41 @@ def size(mapa):
     return mapa["size"]
 
 
+def is_empty(mapa):
+    """
+    Informa si la tabla de símbolos está vacía.
+
+    :return: True si el mapa no tiene parejas llave-valor, False en caso contrario
+    """
+    return mapa["size"] == 0
+
+
+def key_set(mapa):
+    """
+    Retorna una lista (array_list) con todas las llaves de la tabla.
+    Se ignoran las posiciones vacías (None) y las marcadas como __EMPTY__.
+    """
+    llaves = al.new_list()
+    for entrada in mapa["table"]["elements"]:
+        llave = me.get_key(entrada)
+        if llave is not None and llave != "__EMPTY__":
+            al.add_last(llaves, llave)
+    return llaves
+
+
+def value_set(mapa):
+    """
+    Retorna una lista (array_list) con todos los valores de la tabla.
+    Se ignoran las posiciones vacías (None) y las marcadas como __EMPTY__.
+    """
+    valores = al.new_list()
+    for entrada in mapa["table"]["elements"]:
+        llave = me.get_key(entrada)
+        if llave is not None and llave != "__EMPTY__":
+            al.add_last(valores, me.get_value(entrada))
+    return valores
+
+
 def find_slot(my_map, key, hash_value):
     """
     Busca la posición de la llave.
