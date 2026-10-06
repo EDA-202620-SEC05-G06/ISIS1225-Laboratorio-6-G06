@@ -30,20 +30,36 @@ import time
 import tracemalloc
 
 
-# TODO Realice la importación del mapa linear probing
 from DataStructures.Map import map_linear_probing as lp
-# TODO Realice la importación de ArrayList como estructura de datos auxiliar para sus requerimientos
 from DataStructures.List import array_list as al
-# TODO Realice la importación del mapa separate chaining
+from DataStructures.Map import map_separate_chaining as sc
 
 
 data_dir = os.path.dirname(os.path.realpath('__file__')) + '/Data/GoodReads/'
+#Si no existe Data/GoodReads, se usa Data
+if not os.path.isdir(data_dir):
+    data_dir = os.path.dirname(os.path.realpath('__file__')) + '/Data/'
+
+#Tipo de mapa y factor de carga de los índices; se cambian con set_map_config()
+tipomap = lp
+factorcar = 0.5
+
+def set_map_config(colision, factor):
+    """
+    No retorna nada.
+    """
+    global tipomap, factorcar
+    if colision == "CHAINING":
+        tipomap = sc
+    else:
+        tipomap = lp
+    factorcar = factor
 
 def new_logic():
     """
     Inicializa el catálogo de libros. Crea una lista vacía para guardar
     los libros y utiliza tablas de hash para almacenar los datos restantes con diferentes índices
-    utilizando linear probing como tipo de tabla de hash
+    utilizando el tipo de tabla de hash y el factor de carga configurados
     """
     catalog = {"books": None,
                "books_by_id": None,
@@ -57,37 +73,52 @@ def new_logic():
 
     #Tabla de Hash que contiene los libros indexados por good_reads_book_id  
     #(good_read_id -> book)
-    catalog['books_by_id'] = None #TODO completar la creación del mapa
+    catalog['books_by_id'] = tipomap.new_map(10000,factorcar)
 
     #Tabla de Hash con la siguiente pareja llave valor: (author_name -> List(books))
-    catalog['books_by_authors'] = None #TODO completar la creación del mapa
+    catalog['books_by_authors'] = tipomap.new_map(6000,factorcar)
 
     #Tabla de Hash con la siguiente pareja llave valor: (tag_name -> tag)
-    catalog['tags'] = None #TODO completar la creación del mapa
+    catalog['tags'] = tipomap.new_map(34500,factorcar)
 
     #Tabla de Hash con la siguiente pareja llave valor: (tag_id -> book_tags)
-    catalog['book_tags'] = lp.new_map(1000,0.7)
+    catalog['book_tags'] = tipomap.new_map(34500,factorcar)
 
     #Tabla de Hash principal que contiene sub-mapas dentro de los valores
     #con la siguiente representación de la pareja llave valor: (author_name -> (original_publication_year -> list(books)))
-    catalog['books_by_year_author'] = None #TODO completar la creación del mapa
+    catalog['books_by_year_author'] = tipomap.new_map(6000,factorcar)
     
     return catalog
 
-#  -------------------------------------------------------------
 # Funciones para la carga de datos
-#  -------------------------------------------------------------
 
-#TODO incorporar las funciones para toma de tiempo y memoria
-def load_data(catalog):
+def load_data(catalog, medirmem=True):
     """
     Carga los datos de los archivos y cargar los datos en la
     estructura de datos
     """
+    # Iniciar medición de tiempo
+    tiempoini = getTime()
+
+    # Iniciar medición de memoria
+    if medirmem:
+        tracemalloc.start()
+        memoriaini = getMemory()
+
     books, authors = load_books(catalog)
     tag_size = load_tags(catalog)
     book_tag_size = load_books_tags(catalog)
-    return books, authors,tag_size,book_tag_size
+
+    # Calcular medición de tiempo y memoria
+    tiempofin = getTime()
+    tiempotrans = deltaTime(tiempofin, tiempoini)
+    memoriaus = None
+    if medirmem:
+        memoriafin = getMemory()
+        tracemalloc.stop()
+        memoriaus = deltaMemory(memoriaini, memoriafin)
+
+    return books, authors,tag_size,book_tag_size, tiempotrans, memoriaus
 
 
 def load_books(catalog):
@@ -143,9 +174,7 @@ def new_book_tag(tag_id, book_id, count):
     book_tag = {'tag_id': tag_id, 'book_id': book_id,'count':count}
     return book_tag
 
-#  -----------------------------------------------   
 #  Funciones para agregar informacion al catalogo
-#  -----------------------------------------------
 
 def add_book(catalog, book):
     """
@@ -155,7 +184,7 @@ def add_book(catalog, book):
     # Se adiciona el libro a la lista general de libros
     al.add_last(catalog['books'], book)
     # Se adiciona el libro a la tabla de hash indexada por goodreads_book_id
-    lp.put(catalog['books_by_id'],book['goodreads_book_id'], book)
+    tipomap.put(catalog['books_by_id'],book['goodreads_book_id'], book)
     # Se obtienen los autores del libro
     authors = book['authors'].split(",")
     # Para cada autor, se agrega en la tabla de hash indexada por autores y 
@@ -172,7 +201,7 @@ def add_book_author(catalog, author_name, book):
     a los libros de dicho autor
     """
     authors = catalog['books_by_authors']
-    author_value = lp.get(authors,author_name)
+    author_value = tipomap.get(authors,author_name)
     if author_value:
         #Si el autor ya se había agregado al mapa, se obtiene la lista que contiene sus libros y se agrega el nuevo elemento.
         al.add_last(author_value,book)
@@ -181,7 +210,7 @@ def add_book_author(catalog, author_name, book):
         # y como valor una lista que contiene los libros asociados al autor.
         authors_books = al.new_list()
         al.add_last(authors_books,book)
-        lp.put(authors,author_name,authors_books)
+        tipomap.put(authors,author_name,authors_books)
     return catalog
 
 
@@ -199,20 +228,36 @@ def add_book_author_and_year(catalog, author_name, book):
     books_by_year_author = catalog['books_by_year_author']
     pub_year = book['original_publication_year']
     #Si el año de publicación está vacío se reemplaza por un valor simbolico
-    #TODO Completar manejo de los escenarios donde el año de publicación es vacío.
-    author_value = lp.get(books_by_year_author,author_name)
+    pub_year = format_pub_year(pub_year)
+    author_value = tipomap.get(books_by_year_author,author_name)
     if author_value:
-        pub_year_value = lp.get(author_value,pub_year)
+        pub_year_value = tipomap.get(author_value,pub_year)
         if pub_year_value:
             al.add_last(pub_year_value,book)
         else:
             books = al.new_list()
             al.add_last(books, book)
-            pub_year_map = lp.new_map(1000,0.7)
-            lp.put(pub_year_map,pub_year,book)
+            tipomap.put(author_value,pub_year,books)
     else:
-        pass # TODO Completar escenario donde no se había agregado el autor al mapa principal
+        libros = al.new_list()
+        al.add_last(libros, book)
+        mapaani = tipomap.new_map(10,factorcar)
+        tipomap.put(mapaani,pub_year,libros)
+        tipomap.put(books_by_year_author,author_name,mapaani)
     return catalog
+
+
+def format_pub_year(anio):
+    """
+    Retorna el año como texto sin decimales, o "Desconocido" si está vacío.
+    """
+    anio = anio.strip()
+    if anio == "":
+        return "Desconocido"
+    try:
+        return str(int(float(anio)))
+    except ValueError:
+        return anio
 
 
 def add_tag(catalog, tag):
@@ -220,7 +265,7 @@ def add_tag(catalog, tag):
     Adiciona un tag al mapa de tags indexado por nombre del tag
     """
     t = new_tag(tag['tag_name'], tag['tag_id'])
-    lp.put(catalog['tags'],tag['tag_name'],t)
+    tipomap.put(catalog['tags'],tag['tag_name'],t)
     return catalog
 
 
@@ -233,32 +278,30 @@ def add_book_tag(catalog, book_tag):
         - Se crea el nuevo indice en el mapa y como valor se agrega una nueva lista con el book_tag asociado.
     """
     t = new_book_tag(book_tag['tag_id'], book_tag['goodreads_book_id'], book_tag['count'])
-    book_tag_value = lp.contains(catalog['book_tags'],t['tag_id'])
+    book_tag_value = tipomap.contains(catalog['book_tags'],t['tag_id'])
     if book_tag_value:
-        book_tag_list = lp.get(catalog['book_tags'],t['tag_id'])
+        book_tag_list = tipomap.get(catalog['book_tags'],t['tag_id'])
         al.add_last(book_tag_list,book_tag)
     else:
-        pass #TODO Completar escenario donde el book_tag no se había agregado al mapa   
+        listaetiqlib = al.new_list()
+        al.add_last(listaetiqlib,book_tag)
+        tipomap.put(catalog['book_tags'],t['tag_id'],listaetiqlib)
     return catalog
 
-#  -------------------------------------------------------------
 # Funciones de consulta
-#  -------------------------------------------------------------
 
 def get_book_info_by_book_id(catalog, good_reads_book_id):
     """
     Retorna toda la informacion que se tenga almacenada de un libro según su good_reads_id.
     """
-    #TODO Completar función de consulta
-    pass
+    return tipomap.get(catalog['books_by_id'], good_reads_book_id)
 
 
 def get_books_by_author(catalog, author_name):
     """
     Retorna los libros asociado al autor ingresado por párametro
     """
-    #TODO Completar función de consulta
-    pass
+    return author_name, tipomap.get(catalog['books_by_authors'], author_name)
 
 
 def get_books_by_tag(catalog, tag_name):
@@ -271,8 +314,19 @@ def get_books_by_tag(catalog, tag_name):
     de book_tags y finalmente relacionarlo con los datos completos del libro.
 
     """
-    #TODO Completar función de consulta
-    pass
+    etiqueta = tipomap.get(catalog['tags'], tag_name)
+    if etiqueta is None:
+        return None
+    listaetiqlib = tipomap.get(catalog['book_tags'], etiqueta['tag_id'])
+    if listaetiqlib is None:
+        return None
+    libros = al.new_list()
+    for posicion in range(0, al.size(listaetiqlib)):
+        etiquetalib = al.get_element(listaetiqlib, posicion)
+        libro = tipomap.get(catalog['books_by_id'], etiquetalib['goodreads_book_id'])
+        if libro:
+            al.add_last(libros, libro)
+    return libros
 
 
 def get_books_by_author_pub_year(catalog, author_name, pub_year):
@@ -288,11 +342,14 @@ def get_books_by_author_pub_year(catalog, author_name, pub_year):
     tracemalloc.start()
     start_memory = getMemory()
     
-    # TODO Completar la función de consulta
-    resultado = None  # Sustituir con la lógica real
-    
+    resultado = None
+    valoraut = tipomap.get(catalog['books_by_year_author'], author_name)
+    if valoraut:
+        resultado = tipomap.get(valoraut, format_pub_year(pub_year))
+
     # Detener medición de memoria
     stop_memory = getMemory()
+    tracemalloc.stop()
     
     # Calcular medición de tiempo y memoria
     end_time = getTime()
@@ -302,28 +359,24 @@ def get_books_by_author_pub_year(catalog, author_name, pub_year):
     return resultado, tiempo_transcurrido, memoria_usada
 
 
-#  -------------------------------------------------------------
 # Funciones utilizadas para obtener el tamaño de los mapas
-#  -------------------------------------------------------------
 
 def book_size(catalog):
-    return lp.size(catalog['books_by_id'])
+    return tipomap.size(catalog['books_by_id'])
 
 
 def author_size(catalog):
-    return lp.size(catalog['books_by_authors'])
+    return tipomap.size(catalog['books_by_authors'])
 
 
 def tag_size(catalog):
-    return lp.size(catalog['tags'])
+    return tipomap.size(catalog['tags'])
 
 
 def book_tag_size(catalog):
-    return lp.size(catalog['book_tags'])
+    return tipomap.size(catalog['book_tags'])
 
-#  -------------------------------------------------------------
 # Funciones utilizadas para obtener memoria y tiempo
-#  -------------------------------------------------------------
 
 def getTime():
     """
